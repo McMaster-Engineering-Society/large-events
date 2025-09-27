@@ -9,10 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@large-event/api": "workspace:^",
     "@large-event/api-types": "workspace:*",
+    "@large-event/database": "workspace:^",
     "@module-federation/nextjs-mf": "^8.4.0",
     "axios": "^1.6.8",
+    "bcryptjs": "^3.0.2",
+    "cookie": "^1.0.2",
     "date-fns": "^3.6.0",
+    "drizzle-orm": "^0.30.10",
+    "jsonwebtoken": "^9.0.2",
     "next": "15.5.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
@@ -20,6 +26,8 @@
     "styled-components": "^6.1.11"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.12.7",
     "@types/react": "^19.1.14",
     "@types/react-dom": "^19.1.9",

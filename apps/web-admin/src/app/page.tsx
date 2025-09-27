@@ -1,5 +1,10 @@
 import AdminDashboard from '../components/AdminDashboard';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 export default function AdminPage() {
-  return <AdminDashboard />;
+  return (
+    <ProtectedRoute>
+      <AdminDashboard />
+    </ProtectedRoute>
+  );
 }

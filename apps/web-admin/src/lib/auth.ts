@@ -1,5 +1,3 @@
-import { eq } from 'drizzle-orm';
-import { db, users } from '@large-event/database';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -15,14 +13,20 @@ export interface AuthToken {
   iat: number;
 }
 
-export async function findUserByEmail(email: string) {
-  const user = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+// Simple mock user validation for demonstration
+// In production, this would connect to your actual database
+const validUsers = [
+  { id: 1, email: 'admin@example.com' },
+  { id: 2, email: 'test@example.com' },
+  { id: 3, email: 'user@large-event.com' },
+  { id: 4, email: 'demo@test.com' }
+];
 
-  return user.length > 0 ? user[0] : null;
+export async function findUserByEmail(email: string): Promise<AuthUser | null> {
+  // Simulate database lookup
+  await new Promise(resolve => setTimeout(resolve, 100));
+  const user = validUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+  return user || null;
 }
 
 export async function userExists(email: string): Promise<boolean> {

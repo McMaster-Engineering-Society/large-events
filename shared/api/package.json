@@ -10,11 +10,13 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@large-event/database": "workspace:*",
     "@large-event/api-types": "workspace:*",
-    "drizzle-orm": "^0.30.10"
+    "@large-event/database": "workspace:*",
+    "drizzle-orm": "^0.30.10",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "typescript": "^5.4.5"
   },
   "exports": {

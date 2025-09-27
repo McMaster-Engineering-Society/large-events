@@ -59,13 +59,14 @@ echo "Starting Integrated Web Admin App..."
 pnpm --filter @large-event/web-admin dev &
 WEB_ADMIN_PID=$!
 
-Start team services if they have package.json files
+# Start team services if they have package.json files
 for team in "${TEAMS[@]}"; do
     if [ -f "teams/$team/src/package.json" ]; then
         echo "Starting $team services..."
         cd "teams/$team/src"
         pnpm dev &
-        eval "${team^^}_PID=$!"
+        TEAM_UPPER=$(echo "$team" | tr '[:lower:]' '[:upper:]')
+        eval "${TEAM_UPPER}_PID=$!"
         cd ../../..
     else
         echo "⚠️ No package.json found for $team, skipping..."

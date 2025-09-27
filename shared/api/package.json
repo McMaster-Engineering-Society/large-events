@@ -1,0 +1,26 @@
+{
+  "name": "@large-event/api",
+  "version": "1.0.0",
+  "description": "Shared API layer and business logic",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@large-event/database": "workspace:*",
+    "@large-event/api-types": "workspace:*",
+    "drizzle-orm": "^0.30.10"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  }
+}

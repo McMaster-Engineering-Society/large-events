@@ -1,0 +1,19 @@
+[submodule "teams/teamA"]
+	path = teams/teamA
+	url = https://github.com/l-schuurman/capstoneMock.git
+	branch = main
+
+[submodule "teams/teamB"]
+	path = teams/teamB
+	url = https://github.com/VirochaanRG/MES-Event-Management-System.git
+	branch = main
+
+[submodule "teams/teamC"]
+	path = teams/teamC
+	url = https://github.com/4G06-Streamliners/MacSync
+	branch = main
+
+[submodule "teams/teamD"]
+	path = teams/teamD
+	url = https://github.com/l-schuurman/capstoneMock.git
+	branch = main

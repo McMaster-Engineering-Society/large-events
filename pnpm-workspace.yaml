@@ -1,0 +1,25 @@
+packages:
+  - 'shared/*'
+  - 'gateway'
+  - 'apps/*'
+  - 'teams/*/src'
+
+catalog:
+  typescript: "^5.4.5"
+  "@types/node": "^20.12.7"
+  "nestjs/core": "^10.3.8"
+  "nestjs/common": "^10.3.8"
+  "nestjs/platform-express": "^10.3.8"
+  "nestjs/config": "^3.2.2"
+  "nestjs/axios": "^3.0.2"
+  "next": "^14.2.3"
+  "react": "^18.3.1"
+  "react-dom": "^18.3.1"
+  "react-native": "^0.74.1"
+  "expo": "^51.0.8"
+  "drizzle-orm": "^0.30.10"
+  "drizzle-kit": "^0.21.2"
+  "pg": "^8.11.5"
+  "axios": "^1.6.8"
+  "class-validator": "^0.14.1"
+  "class-transformer": "^0.5.1"

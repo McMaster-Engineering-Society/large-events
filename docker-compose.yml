@@ -1,0 +1,321 @@
+version: '3.8'
+
+services:
+  # Database
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: large_event_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - large-event-network
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - large-event-network
+
+  # Internal API Gateway
+  internal-gateway:
+    build:
+      context: ./internal-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - TEAM_A_API_URL=http://team-a-api:3001
+      - TEAM_B_API_URL=http://team-b-api:3002
+      - TEAM_C_API_URL=http://team-c-api:3003
+      - TEAM_D_API_URL=http://team-d-api:3004
+    depends_on:
+      - team-a-api
+      - team-b-api
+      - team-c-api
+      - team-d-api
+    networks:
+      - large-event-network
+
+  # Main Nginx Gateway
+  gateway:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./apps/gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - internal-gateway
+      - web-user
+      - web-admin
+    networks:
+      - large-event-network
+
+  # Integrated Web User App
+  web-user:
+    build:
+      context: ./apps/web-user
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - API_GATEWAY_URL=http://internal-gateway:3000
+      - TEAM_A_WEB_URL=http://team-a-web-user:3011
+      - TEAM_B_WEB_URL=http://team-b-web-user:3012
+      - TEAM_C_WEB_URL=http://team-c-web-user:3013
+      - TEAM_D_WEB_URL=http://team-d-web-user:3014
+    depends_on:
+      - internal-gateway
+    networks:
+      - large-event-network
+
+  # Integrated Web Admin App
+  web-admin:
+    build:
+      context: ./apps/web-admin
+      dockerfile: Dockerfile
+    ports:
+      - "4001:4001"
+    environment:
+      - API_GATEWAY_URL=http://internal-gateway:3000
+      - TEAM_A_WEB_URL=http://team-a-web-admin:3021
+      - TEAM_B_WEB_URL=http://team-b-web-admin:3022
+      - TEAM_C_WEB_URL=http://team-c-web-admin:3023
+      - TEAM_D_WEB_URL=http://team-d-web-admin:3024
+    depends_on:
+      - internal-gateway
+    networks:
+      - large-event-network
+
+  # Team A API
+  team-a-api:
+    build:
+      context: ./teams/teamA/api
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/large_event_db
+      - TEAM_B_API_URL=http://team-b-api:3002
+      - TEAM_C_API_URL=http://team-c-api:3003
+      - TEAM_D_API_URL=http://team-d-api:3004
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - large-event-network
+
+  # Team B API
+  team-b-api:
+    build:
+      context: ./teams/teamB/api
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/large_event_db
+      - TEAM_A_API_URL=http://team-a-api:3001
+      - TEAM_C_API_URL=http://team-c-api:3003
+      - TEAM_D_API_URL=http://team-d-api:3004
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - large-event-network
+
+  # Team C API
+  team-c-api:
+    build:
+      context: ./teams/teamC/api
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/large_event_db
+      - TEAM_A_API_URL=http://team-a-api:3001
+      - TEAM_B_API_URL=http://team-b-api:3002
+      - TEAM_D_API_URL=http://team-d-api:3004
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - large-event-network
+
+  # Team A Web User
+  team-a-web-user:
+    build:
+      context: ./teams/teamA/web-user
+      dockerfile: Dockerfile
+    ports:
+      - "3011:3011"
+    environment:
+      - NEXT_PUBLIC_TEAM_A_API_URL=http://localhost:3000/api/v1/teamA
+      - NEXT_PUBLIC_TEAM_B_API_URL=http://localhost:3000/api/v1/teamB
+      - NEXT_PUBLIC_TEAM_C_API_URL=http://localhost:3000/api/v1/teamC
+      - NEXT_PUBLIC_TEAM_D_API_URL=http://localhost:3000/api/v1/teamD
+    networks:
+      - large-event-network
+
+  # Team A Web Admin
+  team-a-web-admin:
+    build:
+      context: ./teams/teamA/web-admin
+      dockerfile: Dockerfile
+    ports:
+      - "3021:3021"
+    environment:
+      - NEXT_PUBLIC_TEAM_A_API_URL=http://localhost:3000/api/v1/teamA
+      - NEXT_PUBLIC_TEAM_B_API_URL=http://localhost:3000/api/v1/teamB
+      - NEXT_PUBLIC_TEAM_C_API_URL=http://localhost:3000/api/v1/teamC
+      - NEXT_PUBLIC_TEAM_D_API_URL=http://localhost:3000/api/v1/teamD
+    networks:
+      - large-event-network
+
+  # Team B Web User
+  team-b-web-user:
+    build:
+      context: ./teams/teamB/web-user
+      dockerfile: Dockerfile
+    ports:
+      - "3012:3012"
+    environment:
+      - NEXT_PUBLIC_TEAM_A_API_URL=http://localhost:3000/api/v1/teamA
+      - NEXT_PUBLIC_TEAM_B_API_URL=http://localhost:3000/api/v1/teamB
+      - NEXT_PUBLIC_TEAM_C_API_URL=http://localhost:3000/api/v1/teamC
+      - NEXT_PUBLIC_TEAM_D_API_URL=http://localhost:3000/api/v1/teamD
+    networks:
+      - large-event-network
+
+  # Team B Web Admin
+  team-b-web-admin:
+    build:
+      context: ./teams/teamB/web-admin
+      dockerfile: Dockerfile
+    ports:
+      - "3022:3022"
+    environment:
+      - NEXT_PUBLIC_TEAM_A_API_URL=http://localhost:3000/api/v1/teamA
+      - NEXT_PUBLIC_TEAM_B_API_URL=http://localhost:3000/api/v1/teamB
+      - NEXT_PUBLIC_TEAM_C_API_URL=http://localhost:3000/api/v1/teamC
+      - NEXT_PUBLIC_TEAM_D_API_URL=http://localhost:3000/api/v1/teamD
+    networks:
+      - large-event-network
+
+  # Team C Web User
+  team-c-web-user:
+    build:
+      context: ./teams/teamC/web-user
+      dockerfile: Dockerfile
+    ports:
+      - "3013:3013"
+    environment:
+      - NEXT_PUBLIC_TEAM_A_API_URL=http://localhost:3000/api/v1/teamA
+      - NEXT_PUBLIC_TEAM_B_API_URL=http://localhost:3000/api/v1/teamB
+      - NEXT_PUBLIC_TEAM_C_API_URL=http://localhost:3000/api/v1/teamC
+      - NEXT_PUBLIC_TEAM_D_API_URL=http://localhost:3000/api/v1/teamD
+    networks:
+      - large-event-network
+
+  # Team C Web Admin
+  team-c-web-admin:
+    build:
+      context: ./teams/teamC/web-admin
+      dockerfile: Dockerfile
+    ports:
+      - "3023:3023"
+    environment:
+      - NEXT_PUBLIC_TEAM_A_API_URL=http://localhost:3000/api/v1/teamA
+      - NEXT_PUBLIC_TEAM_B_API_URL=http://localhost:3000/api/v1/teamB
+      - NEXT_PUBLIC_TEAM_C_API_URL=http://localhost:3000/api/v1/teamC
+      - NEXT_PUBLIC_TEAM_D_API_URL=http://localhost:3000/api/v1/teamD
+    networks:
+      - large-event-network
+
+  # Nginx Load Balancer (Production)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./gateway/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - gateway
+      - team-a-web-user
+      - team-a-web-admin
+      - team-b-web-user
+      - team-b-web-admin
+      - team-c-web-user
+      - team-c-web-admin
+      - team-d-web-user
+      - team-d-web-admin
+    networks:
+      - large-event-network
+    profiles:
+      - production
+
+  # Team D API
+  team-d-api:
+    build:
+      context: ./teams/teamD/api
+      dockerfile: Dockerfile
+    ports:
+      - "3004:3004"
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/large_event_db
+      - TEAM_A_API_URL=http://team-a-api:3001
+      - TEAM_B_API_URL=http://team-b-api:3002
+      - TEAM_C_API_URL=http://team-c-api:3003
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - large-event-network
+
+  # Team D Web User
+  team-d-web-user:
+    build:
+      context: ./teams/teamD/web-user
+      dockerfile: Dockerfile
+    ports:
+      - "3014:3014"
+    environment:
+      - NEXT_PUBLIC_TEAM_A_API_URL=http://localhost:3000/api/v1/teamA
+      - NEXT_PUBLIC_TEAM_B_API_URL=http://localhost:3000/api/v1/teamB
+      - NEXT_PUBLIC_TEAM_C_API_URL=http://localhost:3000/api/v1/teamC
+      - NEXT_PUBLIC_TEAM_D_API_URL=http://localhost:3000/api/v1/teamD
+    networks:
+      - large-event-network
+
+  # Team D Web Admin
+  team-d-web-admin:
+    build:
+      context: ./teams/teamD/web-admin
+      dockerfile: Dockerfile
+    ports:
+      - "3024:3024"
+    environment:
+      - NEXT_PUBLIC_TEAM_A_API_URL=http://localhost:3000/api/v1/teamA
+      - NEXT_PUBLIC_TEAM_B_API_URL=http://localhost:3000/api/v1/teamB
+      - NEXT_PUBLIC_TEAM_C_API_URL=http://localhost:3000/api/v1/teamC
+      - NEXT_PUBLIC_TEAM_D_API_URL=http://localhost:3000/api/v1/teamD
+    networks:
+      - large-event-network
+
+volumes:
+  postgres_data:
+
+networks:
+  large-event-network:
+    driver: bridge

@@ -1,11 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import TeamAWidget from "./TeamAWidget";
-import TeamBWidget from "./TeamBWidget";
-import TeamCWidget from "./TeamCWidget";
-import TeamDWidget from "./TeamDWidget";
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -46,90 +41,78 @@ export default function AdminDashboard() {
     }
   };
 
+  const teams = [
+    {
+      name: 'Team A',
+      key: 'teamA',
+      bgColor: 'bg-blue-500',
+      hoverColor: 'hover:bg-blue-600',
+      shadowColor: 'shadow-blue-200'
+    },
+    {
+      name: 'Team B',
+      key: 'teamB',
+      bgColor: 'bg-green-500',
+      hoverColor: 'hover:bg-green-600',
+      shadowColor: 'shadow-green-200'
+    },
+    {
+      name: 'Team C',
+      key: 'teamC',
+      bgColor: 'bg-orange-500',
+      hoverColor: 'hover:bg-orange-600',
+      shadowColor: 'shadow-orange-200'
+    },
+    {
+      name: 'Team D',
+      key: 'teamD',
+      bgColor: 'bg-purple-500',
+      hoverColor: 'hover:bg-purple-600',
+      shadowColor: 'shadow-purple-200'
+    }
+  ];
+
   return (
-    <>
-      <div className="space-y-6">
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-6xl mx-auto">
         <div className="mb-8 flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
             <p className="text-gray-600 mt-2">
-              Welcome, {user?.email} - Overview of your large event management platform
+              Welcome, {user?.email} - Select a team portal to manage
             </p>
           </div>
           <button
             onClick={logout}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
             Logout
           </button>
         </div>
 
-        {/* Team Portal Links */}
-        <div className="bg-blue-50 p-4 rounded-lg mb-6">
-          <h2 className="text-lg font-semibold text-blue-800 mb-3">Team Admin Portals</h2>
-          <p className="text-blue-700 text-sm mb-3">
-            Click to open authenticated team portals (opens in new tab)
-          </p>
-          <div className="flex flex-wrap gap-3 mb-4">
-            <button
-              onClick={() => openTeamPortal('teamA')}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {teams.map((team) => (
+            <div
+              key={team.key}
+              onClick={() => openTeamPortal(team.key)}
+              className={`
+                ${team.bgColor} ${team.hoverColor} ${team.shadowColor}
+                rounded-2xl p-8 text-white cursor-pointer
+                transform transition-all duration-200
+                hover:scale-105 hover:shadow-lg
+                flex flex-col items-center justify-center
+                min-h-[200px] text-center
+              `}
             >
-              Team A Portal
-            </button>
-            <button
-              onClick={() => openTeamPortal('teamB')}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-            >
-              Team B Portal
-            </button>
-            <button
-              onClick={() => openTeamPortal('teamC')}
-              className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors"
-            >
-              Team C Portal
-            </button>
-            <button
-              onClick={() => openTeamPortal('teamD')}
-              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
-            >
-              Team D Portal
-            </button>
-          </div>
-          <div className="border-t border-blue-200 pt-3">
-            <p className="text-blue-600 text-xs mb-2">Direct portal URLs (for reference):</p>
-            <div className="flex flex-wrap gap-2 text-xs">
-              <span className="bg-white px-2 py-1 rounded border">TeamA: localhost:3021</span>
-              <span className="bg-white px-2 py-1 rounded border">TeamB: localhost:3022</span>
-              <span className="bg-white px-2 py-1 rounded border">TeamC: localhost:3023</span>
-              <span className="bg-white px-2 py-1 rounded border">TeamD: localhost:3024</span>
+              <h2 className="text-2xl font-bold mb-2">{team.name}</h2>
+              <p className="text-white/90 mb-4">Admin Portal</p>
+              <div className="text-white/80 text-sm">
+                localhost:{teamPortalPorts[team.key]}
+              </div>
             </div>
-          </div>
-        </div>
-
-        {/* Team Widgets Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-8">
-          {/* Team A Section */}
-          <div className="lg:col-span-2 xl:col-span-1">
-            <TeamAWidget />
-          </div>
-
-          {/* Team B Section */}
-          <div className="lg:col-span-1 xl:col-span-1">
-            <TeamBWidget />
-          </div>
-
-          {/* Team C Section */}
-          <div className="lg:col-span-1 xl:col-span-1">
-            <TeamCWidget />
-          </div>
-
-          {/* Team D Section */}
-          <div className="lg:col-span-2 xl:col-span-1">
-            <TeamDWidget />
-          </div>
+          ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }

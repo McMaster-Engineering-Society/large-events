@@ -102,11 +102,13 @@ export default function LoginForm() {
         <Title>Large Event Admin Portal</Title>
         <Form onSubmit={handleSubmit}>
           <Input
+            id="emailLogin"
             type="email"
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
+            style={{"color": "#000"}}
           />
           <Button type="submit" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}

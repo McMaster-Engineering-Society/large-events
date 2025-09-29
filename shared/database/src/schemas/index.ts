@@ -1,1 +1,1 @@
-export * from './users';export * from './team-extensions';
+export * from './users';

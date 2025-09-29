@@ -126,7 +126,7 @@ Contains the configuration for all team submodules:
 ```
 [submodule "teams/teamA"]
     path = teams/teamA
-    url = https://github.com/l-schuurman/capstoneMock.git
+    url = https://github.com/KhushiiSaini/capstone_2025-26-Group24
     branch = main
 ```
 

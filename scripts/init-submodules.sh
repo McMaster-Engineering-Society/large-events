@@ -10,7 +10,7 @@ echo "🚀 Initializing git submodules with sparse-checkout for src/ only..."
 mkdir -p teams
 
 # Team configurations
-TEAMS="teamA:https://github.com/l-schuurman/capstoneMock.git teamB:https://github.com/VirochaanRG/MES-Event-Management-System.git teamC:https://github.com/4G06-Streamliners/MacSync teamD:https://github.com/l-schuurman/capstoneMock.git"
+TEAMS="teamA:https://github.com/KhushiiSaini/capstone_2025-26-Group24 teamB:https://github.com/VirochaanRG/MES-Event-Management-System.git teamC:https://github.com/4G06-Streamliners/MacSync teamD:https://github.com/l-schuurman/capstoneMock.git"
 
 for team_config in $TEAMS; do
     team=$(echo $team_config | cut -d: -f1)

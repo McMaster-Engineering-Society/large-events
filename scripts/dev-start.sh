@@ -4,6 +4,34 @@
 
 set -e
 
+# Parse command line arguments
+START_TEAMS=false
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --teams)
+            START_TEAMS=true
+            shift
+            ;;
+        -h|--help)
+            echo "Usage: $0 [OPTIONS]"
+            echo ""
+            echo "Options:"
+            echo "  --teams    Also start team development servers (pnpm dev in each team repo)"
+            echo "  -h, --help Show this help message"
+            echo ""
+            echo "Default behavior starts main platform services only."
+            echo "Use --teams flag to also start individual team development servers."
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use -h or --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
 echo "🚀 Starting Large Event Development Environment..."
 
 # Check if Docker is running
@@ -59,19 +87,26 @@ echo "Starting Integrated Web Admin App..."
 pnpm --filter @large-event/web-admin dev &
 WEB_ADMIN_PID=$!
 
-# Start team services if they have package.json files
-for team in "${TEAMS[@]}"; do
-    if [ -f "teams/$team/src/package.json" ]; then
-        echo "Starting $team services..."
-        cd "teams/$team/src"
-        pnpm dev &
-        TEAM_UPPER=$(echo "$team" | tr '[:lower:]' '[:upper:]')
-        eval "${TEAM_UPPER}_PID=$!"
-        cd ../../..
-    else
-        echo "⚠️ No package.json found for $team, skipping..."
-    fi
-done
+# Start team services if flag is set and they have package.json files
+if [ "$START_TEAMS" = true ]; then
+    echo ""
+    echo "🏢 Starting team development servers..."
+    for team in "${TEAMS[@]}"; do
+        if [ -f "teams/$team/package.json" ]; then
+            echo "Starting $team development server..."
+            cd "teams/$team"
+            pnpm dev &
+            TEAM_UPPER=$(echo "$team" | tr '[:lower:]' '[:upper:]')
+            eval "${TEAM_UPPER}_PID=$!"
+            cd ../..
+        else
+            echo "⚠️ No package.json found for $team, skipping..."
+        fi
+    done
+else
+    echo ""
+    echo "💡 Tip: Use --teams flag to also start team development servers"
+fi
 
 echo ""
 echo "✅ All available services started!"
@@ -88,9 +123,21 @@ echo "  - Database: postgresql://localhost:5432"
 echo "  - Redis: redis://localhost:6379"
 echo ""
 echo "🏢 Team Standalone Apps:"
-echo "  - Available at /teams/teamX/user/ and /teams/teamX/admin/"
+if [ "$START_TEAMS" = true ]; then
+    echo "  - TeamA: Check console output for port assignments"
+    echo "  - TeamD: Check console output for port assignments"
+    echo "  - TeamB & TeamC: Package.json not configured yet"
+    echo "  - Also available at /teams/teamX/user/ and /teams/teamX/admin/"
+else
+    echo "  - Available at /teams/teamX/user/ and /teams/teamX/admin/"
+    echo "  - Use --teams flag to start team development servers directly"
+fi
 echo ""
-echo "📝 Team services will be available based on their individual configurations"
+if [ "$START_TEAMS" = true ]; then
+    echo "📝 Team development servers started where package.json is available"
+else
+    echo "📝 Team services available through main platform integration only"
+fi
 echo "Press Ctrl+C to stop all services"
 
 # Function to cleanup on exit

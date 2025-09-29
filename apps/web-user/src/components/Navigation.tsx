@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
@@ -22,55 +24,20 @@ export default function Navigation() {
             >
               Dashboard
             </Link>
-            <Link
-              href="/teamA"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Team A
-            </Link>
-            <Link
-              href="/teamB"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Team B
-            </Link>
-            <Link
-              href="/teamC"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Team C
-            </Link>
-            <Link
-              href="/teamD"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Team D
-            </Link>
-            <Link
-              href="/my-bookings"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              My Bookings
-            </Link>
           </div>
 
           {/* User Menu */}
-          <div className="hidden md:flex items-center space-x-4">
-            <button className="text-gray-600 hover:text-gray-900 transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM9 7H4l5-5v5z" />
-              </svg>
-            </button>
-            <div className="relative">
-              <button className="flex items-center text-gray-600 hover:text-gray-900 transition-colors">
-                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                  </svg>
-                </div>
+          {user && (
+            <div className="hidden md:flex items-center space-x-4">
+              <span className="text-gray-600">Welcome, {user.email}</span>
+              <button
+                onClick={logout}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+              >
+                Logout
               </button>
             </div>
-          </div>
+          )}
 
           {/* Mobile Menu Button */}
           <button
@@ -98,41 +65,17 @@ export default function Navigation() {
               >
                 Dashboard
               </Link>
-              <Link
-                href="/teamA"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Team A
-              </Link>
-              <Link
-                href="/teamB"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Team B
-              </Link>
-              <Link
-                href="/teamC"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Team C
-              </Link>
-              <Link
-                href="/teamD"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Team D
-              </Link>
-              <Link
-                href="/my-bookings"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                My Bookings
-              </Link>
+              {user && (
+                <button
+                  onClick={() => {
+                    logout();
+                    setIsOpen(false);
+                  }}
+                  className="text-left px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                >
+                  Logout
+                </button>
+              )}
             </div>
           </div>
         )}

@@ -14,7 +14,8 @@
     "teams/teamA/src",
     "teams/teamB/src",
     "teams/teamC/src",
-    "teams/teamD/src"
+    "teams/teamD/src",
+    "teams/teamD/src/database"
   ],
   "packageManager": "pnpm@8.15.0",
   "scripts": {
@@ -26,6 +27,13 @@
     "db:generate": "pnpm --filter @large-event/database generate",
     "db:migrate": "pnpm --filter @large-event/database migrate",
     "db:push": "pnpm --filter @large-event/database push",
+    "db:studio": "pnpm --filter @large-event/database studio",
+    "teamd:db:generate": "pnpm --filter @teamd/database generate",
+    "teamd:db:migrate": "pnpm --filter @teamd/database migrate",
+    "teamd:db:push": "pnpm --filter @teamd/database push",
+    "teamd:db:studio": "pnpm --filter @teamd/database studio",
+    "teamd:db:promote": "pnpm --filter @teamd/database promote",
+    "db:workflow": "./scripts/db-workflow.sh",
     "setup": "./scripts/setup.sh",
     "sync-submodules": "./scripts/sync-submodules.sh",
     "start:local": "docker-compose up -d && pnpm dev"

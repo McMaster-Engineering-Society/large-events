@@ -3,6 +3,7 @@ packages:
   - 'gateway'
   - 'apps/*'
   - 'teams/*/src'
+  - 'teams/*/src/database'
 
 catalog:
   typescript: "^5.4.5"

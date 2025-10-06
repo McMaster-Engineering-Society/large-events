@@ -24,13 +24,6 @@ The monorepo includes team repositories as git submodules with sparse-checkout c
 - Maintains sparse-checkout configuration
 - Use this to get updates from team repositories
 
-### 3. Setup Sparse Checkout Only
-```bash
-./scripts/setup-sparse-checkout.sh
-```
-- Configures sparse-checkout for existing submodules
-- Use if you already have the repositories but want to enable sparse-checkout
-
 ## Team Repository Structure
 
 After initialization, your teams directory will look like:

@@ -22,8 +22,9 @@ repo-main/
 │   │   └── src/                # Team D's source code from their repository
 ├── shared/
 │   ├── database/               # Drizzle ORM schemas (cross-team)
-│   └── api-types/              # Shared TypeScript types
-├── internal-gateway/             # Express.js API gateway (internal)
+│   ├── api-types/              # Shared TypeScript types
+│   └── api/                    # Shared API utilities
+├── legacy-gateway/             # Legacy API gateway
 └── scripts/                    # Automation and setup scripts
 ```
 
@@ -273,13 +274,14 @@ large-event/
 │   └── mobile-shell/            #    React Native shell app
 ├── shared/                      # 🔧 Shared Infrastructure
 │   ├── database/               #    Cross-team database schemas
-│   └── api-types/              #    Shared TypeScript interfaces
+│   ├── api-types/              #    Shared TypeScript interfaces
+│   └── api/                    #    Shared API utilities
 ├── teams/                      # 🏢 Team Applications
 │   ├── teamA/src/             #    Team A's applications
 │   ├── teamB/src/             #    Team B's applications
-│   └── teamC/src/             #    Team C's applications
+│   ├── teamC/src/             #    Team C's applications
 │   └── teamD/src/             #    Team D's applications
-├── internal-gateway/            # ⚙️  Internal API Gateway
+├── legacy-gateway/             # ⚙️  Legacy API Gateway
 └── scripts/                   # 🛠️  Automation & Setup
 ```
 

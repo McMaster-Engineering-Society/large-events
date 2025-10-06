@@ -1,6 +1,6 @@
 packages:
   - 'shared/*'
-  - 'gateway'
+  - 'legacy-gateway'
   - 'apps/*'
   - 'teams/*/src'
   - 'teams/*/src/database'

@@ -90,6 +90,15 @@ WEB_ADMIN_PID=$!
 # Start team services if flag is set and they have package.json files
 if [ "$START_TEAMS" = true ]; then
     echo ""
+    echo "📦 Installing team dependencies..."
+    for team in "${TEAMS[@]}"; do
+        if [ -f "teams/$team/package.json" ]; then
+            echo "Installing dependencies for $team..."
+            (cd "teams/$team" && pnpm install --silent)
+        fi
+    done
+
+    echo ""
     echo "🏢 Starting team development servers..."
     for team in "${TEAMS[@]}"; do
         if [ -f "teams/$team/package.json" ]; then

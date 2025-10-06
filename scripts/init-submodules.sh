@@ -4,7 +4,7 @@
 
 set -e
 
-echo "🚀 Initializing git submodules with sparse-checkout for src/ only..."
+echo "🚀 Initializing git submodules with sparse-checkout for src/ and essential root files..."
 
 # Create teams directory if it doesn't exist
 mkdir -p teams
@@ -36,9 +36,16 @@ for team_config in $TEAMS; do
         # Enter the team directory
         cd "$TEAM_DIR"
 
-        # Configure sparse-checkout
+        # Configure sparse-checkout to include src/ and essential root files
         git config core.sparseCheckout true
-        echo "src/*" > .git/info/sparse-checkout
+        cat > .git/info/sparse-checkout << EOF
+src/*
+.gitignore
+pnpm-lock.yaml
+pnpm-workspace.yaml
+package.json
+README.md
+EOF
 
         # Checkout only the src/ directory
         git checkout main
@@ -46,16 +53,23 @@ for team_config in $TEAMS; do
         # Go back to root
         cd ../..
 
-        echo "✅ $team initialized successfully (src/ only)"
+        echo "✅ $team initialized successfully (src/ + root files)"
     else
         echo "📁 $team already exists, updating sparse-checkout..."
 
         # Enter the team directory
         cd "$TEAM_DIR"
 
-        # Ensure sparse-checkout is configured
+        # Ensure sparse-checkout is configured with src/ and essential root files
         git config core.sparseCheckout true
-        echo "src/*" > .git/info/sparse-checkout
+        cat > .git/info/sparse-checkout << EOF
+src/*
+.gitignore
+pnpm-lock.yaml
+pnpm-workspace.yaml
+package.json
+README.md
+EOF
 
         # Apply sparse-checkout
         git read-tree -m -u HEAD
@@ -63,7 +77,7 @@ for team_config in $TEAMS; do
         # Go back to root
         cd ../..
 
-        echo "✅ $team sparse-checkout updated"
+        echo "✅ $team sparse-checkout updated (src/ + root files)"
     fi
 done
 

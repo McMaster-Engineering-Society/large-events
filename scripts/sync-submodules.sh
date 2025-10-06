@@ -22,7 +22,14 @@ for team in "${TEAMS[@]}"; do
         if [ ! -f ".git/info/sparse-checkout" ]; then
             echo "🔧 Setting up sparse-checkout for $team..."
             git config core.sparseCheckout true
-            echo "src/*" > .git/info/sparse-checkout
+            cat > .git/info/sparse-checkout << EOF
+src/*
+.gitignore
+pnpm-lock.yaml
+pnpm-workspace.yaml
+package.json
+README.md
+EOF
         fi
 
         # Pull latest changes
@@ -36,7 +43,7 @@ for team in "${TEAMS[@]}"; do
         # Go back to root
         cd ../..
 
-        echo "✅ $team synced successfully (src/ only)"
+        echo "✅ $team synced successfully (src/ + root files)"
     else
         echo "⚠️ $team directory not found or not a git repository"
         echo "   Run ./scripts/init-submodules.sh first to initialize submodules"

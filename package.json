@@ -19,7 +19,7 @@
   ],
   "packageManager": "pnpm@8.15.0",
   "scripts": {
-    "dev": "concurrently \"pnpm -r --parallel dev\"",
+    "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",

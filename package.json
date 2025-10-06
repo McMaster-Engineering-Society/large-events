@@ -7,7 +7,7 @@
     "shared/database",
     "shared/api-types",
     "shared/api",
-    "internal-gateway",
+    "legacy-gateway",
     "apps/web-user",
     "apps/web-admin",
     "apps/mobile-shell",

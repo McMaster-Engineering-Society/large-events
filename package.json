@@ -44,6 +44,8 @@
     "teamd:db:push": "pnpm --filter @teamd/database push",
     "teamd:db:studio": "pnpm --filter @teamd/database studio",
     "teamd:db:promote": "pnpm --filter @teamd/database promote",
+    "teamd:types:promote": "pnpm --filter @teamd/api-types promote",
+    "teamd:api:promote": "pnpm --filter @teamd/api promote",
     "db:workflow": "./scripts/db-workflow.sh",
     "setup": "./scripts/setup.sh",
     "sync-submodules": "./scripts/sync-submodules.sh",

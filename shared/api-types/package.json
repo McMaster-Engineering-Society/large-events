@@ -23,22 +23,6 @@
     "./common": {
       "types": "./dist/common.d.ts",
       "default": "./dist/common.js"
-    },
-    "./teamA": {
-      "types": "./dist/teamA.d.ts",
-      "default": "./dist/teamA.js"
-    },
-    "./teamB": {
-      "types": "./dist/teamB.d.ts",
-      "default": "./dist/teamB.js"
-    },
-    "./teamC": {
-      "types": "./dist/teamC.d.ts",
-      "default": "./dist/teamC.js"
-    },
-    "./teamD": {
-      "types": "./dist/teamD.d.ts",
-      "default": "./dist/teamD.js"
     }
   }
 }

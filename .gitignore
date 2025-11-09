@@ -4,3 +4,6 @@ dist/
 
 # TypeScript build info
 *.tsbuildinfo
+
+# Verdaccio password
+htpasswd

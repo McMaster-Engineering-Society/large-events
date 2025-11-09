@@ -21,6 +21,20 @@ services:
     networks:
       - large-event-network
 
+  # Verdaccio - Private npm registry for local development
+  verdaccio:
+    image: verdaccio/verdaccio:5
+    container_name: verdaccio
+    ports:
+      - "4873:4873"
+    volumes:
+      - ./verdaccio/conf:/verdaccio/conf
+      - verdaccio_storage:/verdaccio/storage
+    environment:
+      - VERDACCIO_PORT=4873
+    networks:
+      - large-event-network
+
   # Internal API Gateway
   internal-gateway:
     build:
@@ -313,6 +327,7 @@ services:
 
 volumes:
   postgres_data:
+  verdaccio_storage:
 
 networks:
   large-event-network:

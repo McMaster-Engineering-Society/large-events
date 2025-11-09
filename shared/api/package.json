@@ -4,6 +4,15 @@
   "description": "Shared API layer and business logic",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MacEngSociety/large-event.git",
+    "directory": "shared/api"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "@large-event:registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",

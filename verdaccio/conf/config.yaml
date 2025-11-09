@@ -1,0 +1,72 @@
+#
+# Verdaccio Configuration for Large Event Platform
+# Private npm registry for @large-event scoped packages
+#
+
+# Storage path for packages
+storage: /verdaccio/storage
+
+# Authentication
+auth:
+  htpasswd:
+    file: /verdaccio/conf/htpasswd
+    # Maximum number of users allowed to register (default: infinity)
+    # Set to -1 to disable registration
+    max_users: 1000
+
+# Uplinks - proxy to public npm registry
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+    # Optional: cache all requests
+    cache: true
+
+# Package access control
+packages:
+  # @large-event scoped packages (our private packages)
+  '@large-event/*':
+    # Allow all users to access (read)
+    access: $all
+    # Only authenticated users can publish
+    publish: $authenticated
+    # Only authenticated users can unpublish
+    unpublish: $authenticated
+    # Don't proxy to npmjs for our private packages
+    proxy: npmjs
+
+  # All other packages
+  '**':
+    # Allow all users to access public packages
+    access: $all
+    # Proxy to npmjs for all other packages
+    proxy: npmjs
+
+# Server configuration
+server:
+  keepAliveTimeout: 60
+
+# Middleware
+middlewares:
+  audit:
+    enabled: true
+
+# Web UI
+web:
+  title: Large Event - Private Registry
+  # Customize the UI
+  # logo: logo.png
+  # gravatar: true
+  # scope: '@large-event'
+  enable: true
+
+# Logs settings
+logs:
+  - { type: stdout, format: pretty, level: http }
+
+# Security settings
+security:
+  api:
+    # Require authentication for all API calls
+    jwt:
+      sign:
+        expiresIn: 7d

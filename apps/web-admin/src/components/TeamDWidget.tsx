@@ -1,59 +1,7 @@
-import { useState, useEffect } from 'react';
 import { useTeamWidget } from '../hooks/useTeamWidget';
 
 export default function TeamDWidget() {
-  const { isLoading, error, loadRemote, fallbackUrl } = useTeamWidget('team-d-admin');
-  const [RemoteComponent, setRemoteComponent] = useState<React.ComponentType | null>(null);
-
-  useEffect(() => {
-    async function loadTeamDComponent() {
-      try {
-        const remote = await loadRemote('TeamDAdmin');
-        setRemoteComponent(() => remote);
-      } catch (err) {
-        console.warn('Failed to load Team D admin remote component:', err);
-      }
-    }
-
-    loadTeamDComponent();
-  }, [loadRemote]);
-
-  if (error && !RemoteComponent) {
-    return (
-      <div className="widget-container">
-        <div className="widget-header">
-          <h2>Team D Admin</h2>
-        </div>
-        <div className="widget-content">
-          <div className="error-state">
-            <p className="mb-4">Unable to load Team D Admin widget</p>
-            <button
-              onClick={() => window.open('/teams/teamD/admin/', '_blank')}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-            >
-              Open Team D Admin Portal
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (isLoading && !RemoteComponent) {
-    return (
-      <div className="widget-container">
-        <div className="widget-header">
-          <h2>Team D Admin</h2>
-        </div>
-        <div className="widget-content">
-          <div className="loading-state">
-            <div className="loading-spinner"></div>
-            <p>Loading Team D Admin...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const { teamUrl } = useTeamWidget('team-d-admin');
 
   return (
     <div className="widget-container">
@@ -67,18 +15,14 @@ export default function TeamDWidget() {
         </a>
       </div>
       <div className="widget-content">
-        {RemoteComponent ? (
-          <RemoteComponent />
-        ) : (
-          <iframe
-            src={fallbackUrl}
-            width="100%"
-            height="400"
-            frameBorder="0"
-            title="Team D Admin Dashboard"
-            className="rounded border-0"
-          />
-        )}
+        <iframe
+          src={teamUrl}
+          width="100%"
+          height="400"
+          frameBorder="0"
+          title="Team D Admin Dashboard"
+          className="rounded border-0"
+        />
       </div>
     </div>
   );

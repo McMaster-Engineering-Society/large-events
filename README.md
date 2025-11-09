@@ -249,9 +249,9 @@ docker-compose --profile production up -d
 ### Application Types
 
 #### 1. **Integrated Applications** (`/apps`)
-- **Micro-frontend shells** that combine all team features
-- **Module Federation** for seamless component sharing
-- **Iframe fallbacks** for teams without micro-frontend support
+- **Shell applications** that combine all team features
+- **Iframe embedding** for team UI integration
+- **Independent team deployment** with automatic integration
 - **Unified navigation** and user experience
 
 #### 2. **Shared Packages** (`/shared`)

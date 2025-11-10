@@ -25,10 +25,12 @@ for team in "${TEAMS[@]}"; do
             cat > .git/info/sparse-checkout << EOF
 src/*
 .gitignore
+.npmrc
 pnpm-lock.yaml
 pnpm-workspace.yaml
 package.json
 README.md
+teamd.config.mts
 EOF
         fi
 

@@ -1,6 +1,6 @@
 {
   "name": "@large-event/api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shared API layer and business logic",
   "type": "module",
   "main": "dist/index.js",
@@ -11,8 +11,7 @@
     "directory": "shared/api"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "@large-event:registry": "https://npm.pkg.github.com"
+    "registry": "http://localhost:4873"
   },
   "scripts": {
     "build": "tsc",
@@ -20,8 +19,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@large-event/api-types": "workspace:*",
-    "@large-event/database": "workspace:*",
+    "@large-event/api-types": "^1.0.1",
+    "@large-event/database": "^1.0.1",
     "drizzle-orm": "^0.30.10",
     "jsonwebtoken": "^9.0.2"
   },

@@ -1,6 +1,6 @@
 {
   "name": "@large-event/gateway",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "API Gateway for multi-team architecture",
   "main": "dist/index.js",
   "scripts": {

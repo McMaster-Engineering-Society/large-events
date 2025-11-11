@@ -1,7 +1,7 @@
 import { useAuth } from "../contexts/AuthContext";
 
 export default function AdminDashboard() {
-  const { user, logout } = useAuth();
+  const { user, instances, logout } = useAuth();
 
   const teamPortalPorts: Record<string, number> = {
     teamA: 3021,
@@ -10,33 +10,11 @@ export default function AdminDashboard() {
     teamD: 3024,
   };
 
-  const generateTeamPortalUrl = (teamName: string, token?: string) => {
+  const openTeamPortal = (teamName: string) => {
     const port = teamPortalPorts[teamName];
-    const baseUrl = `http://localhost:${port}`;
-    return token ? `${baseUrl}?auth=${encodeURIComponent(token)}` : baseUrl;
-  };
-
-  const openTeamPortal = async (teamName: string) => {
-    try {
-      const response = await fetch('/api/auth/me');
-      if (response.ok) {
-        const data = await response.json();
-        const tokenResponse = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: data.user.email })
-        });
-
-        if (tokenResponse.ok) {
-          const tokenData = await tokenResponse.json();
-          const url = generateTeamPortalUrl(teamName, tokenData.token);
-          window.open(url, '_blank');
-        }
-      }
-    } catch (error) {
-      console.error('Error opening team portal:', error);
-      window.open(generateTeamPortalUrl(teamName), '_blank');
-    }
+    const url = `http://localhost:${port}`;
+    // Cookie will be automatically sent with request
+    window.open(url, '_blank');
   };
 
   const teams = [
@@ -88,23 +66,57 @@ export default function AdminDashboard() {
           </button>
         </div>
 
+        {instances.length > 0 && (
+          <div className="mb-8 bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Your Instances</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {instances.map((instance) => (
+                <div
+                  key={instance.id}
+                  className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                >
+                  <div className="font-semibold text-gray-900">{instance.name}</div>
+                  <div className="text-sm text-gray-600 mt-1">
+                    {instance.ownerOrganization.acronym || instance.ownerOrganization.name}
+                  </div>
+                  <div className="text-xs text-gray-500 mt-2">
+                    Access: <span className="font-medium">{instance.accessLevel}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-gray-500 mt-4">
+              Total instances: {instances.length}
+            </p>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {teams.map((team) => (
             <div
               key={team.key}
-              onClick={() => openTeamPortal(team.key)}
               className={`
-                ${team.bgColor} ${team.hoverColor} ${team.shadowColor}
-                rounded-2xl p-8 text-white cursor-pointer
-                transform transition-all duration-200
-                hover:scale-105 hover:shadow-lg
+                ${team.bgColor} ${team.shadowColor}
+                rounded-2xl p-8 text-white
                 flex flex-col items-center justify-center
                 min-h-[200px] text-center
               `}
             >
               <h2 className="text-2xl font-bold mb-2">{team.name}</h2>
               <p className="text-white/90 mb-4">Admin Portal</p>
-              <div className="text-white/80 text-sm">
+
+              <button
+                onClick={() => openTeamPortal(team.key)}
+                className={`
+                  mt-4 px-6 py-3 bg-white/20 rounded-lg
+                  ${team.hoverColor} hover:bg-white/30
+                  transition-colors font-semibold
+                `}
+              >
+                Open Dashboard
+              </button>
+
+              <div className="text-white/60 text-xs mt-4">
                 localhost:{teamPortalPorts[team.key]}
               </div>
             </div>

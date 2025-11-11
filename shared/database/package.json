@@ -1,7 +1,8 @@
 {
   "name": "@large-event/database",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shared database schemas and utilities",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": {
@@ -10,8 +11,7 @@
     "directory": "shared/database"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "@large-event:registry": "https://npm.pkg.github.com"
+    "registry": "http://localhost:4873"
   },
   "scripts": {
     "build": "tsc",
@@ -19,6 +19,7 @@
     "generate": "node scripts/generate-migration.js",
     "generate:simple": "drizzle-kit generate",
     "migrate": "tsx src/migrate.ts",
+    "seed": "tsx src/seed.ts",
     "push": "drizzle-kit push",
     "studio": "drizzle-kit studio",
     "clean": "rm -rf dist"

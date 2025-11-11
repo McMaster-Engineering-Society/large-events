@@ -1,7 +1,8 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import { validateUser, generateToken, verifyToken } from '../lib/auth.js';
+import { findUserByEmail, generateToken, verifyToken } from '@large-event/api';
+import { db, instances, organizations, userInstanceAccess, eq } from '@large-event/database';
 import { serialize } from 'cookie';
 
 const app = express();
@@ -9,7 +10,7 @@ const PORT = 4101;
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:4001',
+  origin: ['http://localhost:4001', 'http://localhost:3024', 'http://localhost:3014'],
   credentials: true,
 }));
 app.use(express.json());
@@ -41,9 +42,17 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ error: 'Email is required' });
     }
 
-    const user = await validateUser(email);
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
+    // Find user in shared database (must be pre-seeded)
+    const user = await findUserByEmail(email);
+
     if (!user) {
-      return res.status(401).json({ error: 'User not found' });
+      return res.status(401).json({ error: 'User not found. Please contact administrator.' });
     }
 
     const token = generateToken(user);
@@ -53,7 +62,8 @@ app.post('/api/auth/login', async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 1000,
-      path: '/'
+      path: '/',
+      domain: process.env.NODE_ENV === 'production' ? '.large-event.com' : undefined
     });
 
     res.json({
@@ -82,6 +92,42 @@ app.get('/api/auth/me', authMiddleware, (req, res) => {
 app.get('/api/auth/token', authMiddleware, (req, res) => {
   const token = req.cookies['auth-token'];
   res.json({ token });
+});
+
+// Get user's accessible instances
+app.get('/api/instances', authMiddleware, async (req, res) => {
+  try {
+    const userId = (req as any).user.id;
+
+    // Query shared instance access tables
+    const userAccess = await db
+      .select()
+      .from(userInstanceAccess)
+      .innerJoin(instances, eq(userInstanceAccess.instanceId, instances.id))
+      .innerJoin(organizations, eq(instances.ownerOrganizationId, organizations.id))
+      .where(eq(userInstanceAccess.userId, userId));
+
+    // Map to response format
+    const instancesList = userAccess.map((row) => ({
+      id: row.user_instance_access.instanceId,
+      name: row.instances.name,
+      accessLevel: row.user_instance_access.accessLevel,
+      ownerOrganization: {
+        id: row.instances.ownerOrganizationId,
+        name: row.organizations.name,
+        acronym: row.organizations.acronym,
+      },
+    }));
+
+    res.json({
+      success: true,
+      instances: instancesList,
+      count: instancesList.length
+    });
+  } catch (error) {
+    console.error('Error fetching instances:', error);
+    res.status(500).json({ error: 'Failed to fetch instances' });
+  }
 });
 
 app.listen(PORT, () => {

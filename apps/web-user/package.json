@@ -1,6 +1,6 @@
 {
   "name": "@large-event/web-user",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Integrated user web application - micro-frontend shell",
   "type": "module",
   "scripts": {
@@ -14,7 +14,9 @@
     "lint": "eslint . --ext ts,tsx"
   },
   "dependencies": {
-    "@large-event/api-types": "workspace:*",
+    "@large-event/api": "^1.0.1",
+    "@large-event/api-types": "^1.0.1",
+    "@large-event/database": "^1.0.1",
     "@tanstack/react-query": "^5.56.2",
     "@tanstack/react-router": "^1.58.3",
     "axios": "^1.6.8",

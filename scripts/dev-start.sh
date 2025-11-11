@@ -42,7 +42,7 @@ fi
 
 # Start infrastructure services
 echo "🗃️ Starting database and Redis..."
-docker-compose up -d postgres redis
+docker-compose up -d postgres redis verdaccio
 
 # Wait for database to be ready
 echo "⏳ Waiting for database to be ready..."
@@ -61,7 +61,7 @@ TEAMS=("teamA" "teamB" "teamC" "teamD")
 MISSING_TEAMS=()
 
 for team in "${TEAMS[@]}"; do
-    if [ ! -d "teams/$team/src" ]; then
+    if [ ! -d "teams/$team" ]; then
         MISSING_TEAMS+=("$team")
     fi
 done
@@ -90,28 +90,38 @@ WEB_ADMIN_PID=$!
 # Start team services if flag is set and they have package.json files
 if [ "$START_TEAMS" = true ]; then
     echo ""
-    echo "📦 Installing team dependencies..."
+    echo "🏢 Starting team development servers..."
+
+    # Track which teams successfully start
+    STARTED_TEAMS=()
+    SKIPPED_TEAMS=()
+
     for team in "${TEAMS[@]}"; do
         if [ -f "teams/$team/package.json" ]; then
-            echo "Installing dependencies for $team..."
-            (cd "teams/$team" && pnpm install --silent)
+            # Check if package.json has a dev script
+            if grep -q '"dev"' "teams/$team/package.json" 2>/dev/null; then
+                echo "✓ Starting $team development server..."
+                (cd "teams/$team" && pnpm dev > /dev/null 2>&1) &
+                TEAM_UPPER=$(echo "$team" | tr '[:lower:]' '[:upper:]')
+                eval "${TEAM_UPPER}_PID=$!"
+                STARTED_TEAMS+=("$team")
+            else
+                echo "⚠️ $team has no 'dev' script in package.json, skipping..."
+                SKIPPED_TEAMS+=("$team")
+            fi
+        else
+            echo "⚠️ No package.json found for $team, skipping..."
+            SKIPPED_TEAMS+=("$team")
         fi
     done
 
-    echo ""
-    echo "🏢 Starting team development servers..."
-    for team in "${TEAMS[@]}"; do
-        if [ -f "teams/$team/package.json" ]; then
-            echo "Starting $team development server..."
-            cd "teams/$team"
-            pnpm dev &
-            TEAM_UPPER=$(echo "$team" | tr '[:lower:]' '[:upper:]')
-            eval "${TEAM_UPPER}_PID=$!"
-            cd ../..
-        else
-            echo "⚠️ No package.json found for $team, skipping..."
-        fi
-    done
+    if [ ${#STARTED_TEAMS[@]} -gt 0 ]; then
+        echo "✅ Started team servers: ${STARTED_TEAMS[*]}"
+    fi
+    if [ ${#SKIPPED_TEAMS[@]} -gt 0 ]; then
+        echo "ℹ️  Skipped teams (no dev script or package.json): ${SKIPPED_TEAMS[*]}"
+        echo "   These teams are still available via platform integration"
+    fi
 else
     echo ""
     echo "💡 Tip: Use --teams flag to also start team development servers"
@@ -130,36 +140,44 @@ echo "⚙️  Development Services:"
 echo "  - API Gateway: http://localhost:3000"
 echo "  - Database: postgresql://localhost:5432"
 echo "  - Redis: redis://localhost:6379"
+echo "  - Verdaccio (npm registry): http://localhost:4873"
 echo ""
-echo "🏢 Team Standalone Apps:"
+echo "🏢 Team Services:"
 if [ "$START_TEAMS" = true ]; then
-    echo "  - TeamA: Check console output for port assignments"
-    echo "  - TeamD: Check console output for port assignments"
-    echo "  - TeamB & TeamC: Package.json not configured yet"
-    echo "  - Also available at /teams/teamX/user/ and /teams/teamX/admin/"
+    if [ ${#STARTED_TEAMS[@]} -gt 0 ]; then
+        echo "  ✓ Running team dev servers: ${STARTED_TEAMS[*]}"
+        echo "    (Check individual team console output for port assignments)"
+    fi
+    if [ ${#SKIPPED_TEAMS[@]} -gt 0 ]; then
+        echo "  ⚠ Teams without dev scripts: ${SKIPPED_TEAMS[*]}"
+    fi
+    echo "  - All teams accessible via /teams/teamX/user/ and /teams/teamX/admin/"
 else
-    echo "  - Available at /teams/teamX/user/ and /teams/teamX/admin/"
+    echo "  - Team apps available at /teams/teamX/src/web-user/ and /teams/teamX/src/web-admin/"
     echo "  - Use --teams flag to start team development servers directly"
 fi
 echo ""
-if [ "$START_TEAMS" = true ]; then
-    echo "📝 Team development servers started where package.json is available"
-else
-    echo "📝 Team services available through main platform integration only"
-fi
-echo "Press Ctrl+C to stop all services"
+echo "📝 Press Ctrl+C to stop all services"
 
 # Function to cleanup on exit
 cleanup() {
+    echo ""
     echo "🚨 Stopping all services..."
-    # Kill all background jobs
-    jobs -p | xargs -r kill 2>/dev/null
-    docker-compose down
+
+    # Kill all background jobs (pnpm dev processes)
+    echo "  - Stopping development servers..."
+    jobs -p | xargs kill 2>/dev/null || true
+
+    # Stop Docker services
+    echo "  - Stopping Docker services..."
+    docker-compose stop postgres redis verdaccio 2>/dev/null || true
+
     echo "✅ All services stopped"
+    exit 0
 }
 
-# Set trap to cleanup on exit
-trap cleanup EXIT
+# Set trap to cleanup on exit and interrupt
+trap cleanup EXIT INT TERM
 
 # Wait for user to stop
 wait

@@ -18,6 +18,11 @@
     "teams/teamD/src/database"
   ],
   "packageManager": "pnpm@8.15.0",
+  "pnpm": {
+    "overrides": {
+      "drizzle-orm": "0.30.10"
+    }
+  },
   "scripts": {
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r build",

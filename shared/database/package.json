@@ -10,9 +10,6 @@
     "url": "https://github.com/MacEngSociety/large-event.git",
     "directory": "shared/database"
   },
-  "publishConfig": {
-    "registry": "http://localhost:4873"
-  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",

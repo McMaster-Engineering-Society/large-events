@@ -34,6 +34,31 @@ packages:
     # Don't proxy to npmjs for our private packages
     proxy: npmjs
 
+  # Team packages (team-specific private packages)
+  '@teamd/*':
+    access: $all
+    publish: $authenticated
+    unpublish: $authenticated
+    proxy: npmjs
+
+  '@teama/*':
+    access: $all
+    publish: $authenticated
+    unpublish: $authenticated
+    proxy: npmjs
+
+  '@teamb/*':
+    access: $all
+    publish: $authenticated
+    unpublish: $authenticated
+    proxy: npmjs
+
+  '@teamc/*':
+    access: $all
+    publish: $authenticated
+    unpublish: $authenticated
+    proxy: npmjs
+
   # All other packages
   '**':
     # Allow all users to access public packages

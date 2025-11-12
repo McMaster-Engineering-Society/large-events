@@ -28,12 +28,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-router"
-    ],
-    "scheme": "large-event",
-    "experiments": {
-      "typedRoutes": true
-    }
+    "scheme": "large-event"
   }
 }

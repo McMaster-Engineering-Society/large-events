@@ -237,6 +237,122 @@ docker-compose down         # Stop all services
 docker-compose logs -f      # View logs
 ```
 
+#### Mobile Package Development & Publishing
+
+The platform supports team-specific mobile component packages published to Verdaccio. Teams develop native React Native components independently, then publish them for integration into the mobile-shell.
+
+**Development Workflow:**
+
+```bash
+# 1. Develop mobile components in team repository
+cd teams/teamD/src/mobile/src/components
+# Edit/create React Native components
+
+# 2. Build the mobile package locally
+pnpm teamd:mobile:build
+
+# 3. Start Verdaccio (if not running)
+docker-compose up -d verdaccio
+
+# 4. Authenticate with Verdaccio (first time only)
+npm login --registry http://localhost:4873
+# Username: test, Password: test
+
+# 5. Publish package to Verdaccio
+pnpm teamd:mobile:publish
+# Or manually: cd teams/teamD/src/mobile && pnpm publish --registry http://localhost:4873
+
+# 6. Mobile-shell automatically uses workspace link for development
+# Use "workspace:*" in package.json for active development
+# Use "1.0.0" (specific version) to test published packages
+```
+
+**Two Integration Modes:**
+
+1. **Workspace Development** (Default):
+   - Mobile-shell uses `"@teamd/mobile-components": "workspace:*"` in package.json
+   - Changes in team mobile components immediately available
+   - Best for active development and testing
+
+2. **Published Package Integration**:
+   - Change to `"@teamd/mobile-components": "1.0.0"` (specific version)
+   - Tests the published Verdaccio package
+   - Simulates production deployment
+   - Required for verifying package exports work correctly
+
+**Team Mobile Package Structure:**
+
+```
+teams/teamD/src/mobile/
+├── src/
+│   ├── components/       # React Native components
+│   │   └── Placeholder.tsx
+│   ├── services/         # API clients and utilities
+│   │   └── api.ts        # Team D API client
+│   ├── types/            # TypeScript type definitions
+│   │   └── index.ts
+│   └── index.ts          # Package exports
+├── dist/                 # Compiled output (generated)
+├── package.json          # Package config with publishConfig
+├── tsconfig.json         # TypeScript config
+└── README.md             # Team documentation
+```
+
+**Integration in Mobile-Shell:**
+
+```typescript
+// Import team component
+import { TeamDPlaceholder } from '@teamd/mobile-components';
+import { useAuth } from '../contexts/AuthContext';
+import TeamComponentWrapper from '../components/TeamComponentWrapper';
+
+function TeamDHomeScreen() {
+  const { user, token, instances } = useAuth();
+
+  return (
+    <TeamComponentWrapper
+      user={user!}
+      token={token!}
+      instances={instances}
+      teamName="Team D"
+    >
+      <TeamDPlaceholder
+        user={user!}
+        token={token!}
+        instances={instances}
+      />
+    </TeamComponentWrapper>
+  );
+}
+```
+
+**Props Interface:**
+
+All team mobile components receive these props:
+
+```typescript
+interface TeamComponentProps {
+  user: AuthUser;              // Authenticated user info
+  token: string;               // JWT token
+  instances: InstanceResponse[]; // User's accessible instances
+  onNavigateBack?: () => void; // Optional navigation callback
+}
+```
+
+**Verdaccio Setup:**
+
+- Registry URL: `http://localhost:4873`
+- Web UI: `http://localhost:4873`
+- Configured scopes: `@large-event/*`, `@teamd/*`, `@teama/*`, `@teamb/*`, `@teamc/*`
+- Authentication: test/test (development only)
+
+**Notes:**
+- Team mobile packages export React Native components (NOT web components)
+- Components use react-native primitives (View, Text, ScrollView, etc.)
+- Teams include their own API clients in `services/` directory
+- Mobile-shell provides auth context and shared types via `@large-event/api-types`
+- Published packages include both source (`src/`) and compiled (`dist/`) code
+
 ### Development Server Ports
 
 | Service | Port | URL |

@@ -6,6 +6,7 @@ packages:
   - 'teams/*/src/database'
   - 'teams/*/src/api'
   - 'teams/*/src/shared/api-types'
+  - 'teams/*/src/mobile'
 
 catalog:
   typescript: "^5.4.5"

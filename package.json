@@ -15,7 +15,8 @@
     "teams/teamB/src",
     "teams/teamC/src",
     "teams/teamD/src",
-    "teams/teamD/src/database"
+    "teams/teamD/src/database",
+    "teams/teamD/src/mobile-components"
   ],
   "packageManager": "pnpm@8.15.0",
   "pnpm": {
@@ -51,6 +52,9 @@
     "teamd:db:promote": "pnpm --filter @teamd/database promote",
     "teamd:types:promote": "pnpm --filter @teamd/api-types promote",
     "teamd:api:promote": "pnpm --filter @teamd/api promote",
+    "teamd:mobile:build": "pnpm --filter @teamd/mobile-components build",
+    "teamd:mobile:dev": "pnpm --filter @teamd/mobile-components dev",
+    "teamd:mobile:publish": "./scripts/publish-mobile.sh teamd",
     "db:workflow": "./scripts/db-workflow.sh",
     "setup": "./scripts/setup.sh",
     "sync-submodules": "./scripts/sync-submodules.sh",

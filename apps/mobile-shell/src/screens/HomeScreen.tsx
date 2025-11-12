@@ -1,1 +1,136 @@
-import React from 'react';\nimport {\n  View,\n  Text,\n  StyleSheet,\n  ScrollView,\n  TouchableOpacity,\n  Dimensions,\n} from 'react-native';\nimport { Ionicons } from '@expo/vector-icons';\nimport TeamWidget from '../components/TeamWidget';\n\nconst { width } = Dimensions.get('window');\n\nexport default function HomeScreen({ navigation }: any) {\n  return (\n    <ScrollView style={styles.container}>\n      <View style={styles.header}>\n        <Text style={styles.title}>Welcome to Large Event Platform</Text>\n        <Text style={styles.subtitle}>\n          Your complete solution for events, vendors, and venues\n        </Text>\n      </View>\n\n      <View style={styles.quickActions}>\n        <Text style={styles.sectionTitle}>Quick Actions</Text>\n        <View style={styles.actionsGrid}>\n          <TouchableOpacity\n            style={[styles.actionCard, { backgroundColor: '#dbeafe' }]}\n            onPress={() => navigation.navigate('Events')}\n          >\n            <Ionicons name=\"calendar\" size={24} color=\"#3b82f6\" />\n            <Text style={styles.actionText}>Browse Events</Text>\n          </TouchableOpacity>\n\n          <TouchableOpacity\n            style={[styles.actionCard, { backgroundColor: '#dcfce7' }]}\n            onPress={() => navigation.navigate('Vendors')}\n          >\n            <Ionicons name=\"business\" size={24} color=\"#10b981\" />\n            <Text style={styles.actionText}>Find Vendors</Text>\n          </TouchableOpacity>\n\n          <TouchableOpacity\n            style={[styles.actionCard, { backgroundColor: '#f3e8ff' }]}\n            onPress={() => navigation.navigate('Venues')}\n          >\n            <Ionicons name=\"location\" size={24} color=\"#8b5cf6\" />\n            <Text style={styles.actionText}>Book Venues</Text>\n          </TouchableOpacity>\n\n          <TouchableOpacity\n            style={[styles.actionCard, { backgroundColor: '#fef3c7' }]}\n            onPress={() => navigation.navigate('Profile')}\n          >\n            <Ionicons name=\"person\" size={24} color=\"#f59e0b\" />\n            <Text style={styles.actionText}>My Profile</Text>\n          </TouchableOpacity>\n        </View>\n      </View>\n\n      <View style={styles.widgets}>\n        <Text style={styles.sectionTitle}>Dashboard</Text>\n        \n        <View style={styles.widgetContainer}>\n          <TeamWidget\n            title=\"Recent Events\"\n            teamName=\"teamA\"\n            fallbackUrl=\"/teams/teamA/user/\"\n            color=\"#3b82f6\"\n          />\n        </View>\n\n        <View style={styles.widgetContainer}>\n          <TeamWidget\n            title=\"Popular Vendors\"\n            teamName=\"teamB\"\n            fallbackUrl=\"/teams/teamB/user/\"\n            color=\"#10b981\"\n          />\n        </View>\n\n        <View style={styles.widgetContainer}>\n          <TeamWidget\n            title=\"Available Venues\"\n            teamName=\"teamC\"\n            fallbackUrl=\"/teams/teamC/user/\"\n            color=\"#8b5cf6\"\n          />\n        </View>\n      </View>\n    </ScrollView>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: {\n    flex: 1,\n    backgroundColor: '#f8fafc',\n  },\n  header: {\n    padding: 20,\n    backgroundColor: 'white',\n    marginBottom: 20,\n  },\n  title: {\n    fontSize: 24,\n    fontWeight: 'bold',\n    color: '#1e293b',\n    marginBottom: 8,\n  },\n  subtitle: {\n    fontSize: 16,\n    color: '#64748b',\n    lineHeight: 22,\n  },\n  quickActions: {\n    padding: 20,\n    backgroundColor: 'white',\n    marginBottom: 20,\n  },\n  sectionTitle: {\n    fontSize: 18,\n    fontWeight: '600',\n    color: '#1e293b',\n    marginBottom: 16,\n  },\n  actionsGrid: {\n    flexDirection: 'row',\n    flexWrap: 'wrap',\n    justifyContent: 'space-between',\n  },\n  actionCard: {\n    width: (width - 60) / 2,\n    padding: 16,\n    borderRadius: 12,\n    alignItems: 'center',\n    marginBottom: 12,\n  },\n  actionText: {\n    marginTop: 8,\n    fontSize: 14,\n    fontWeight: '500',\n    color: '#1e293b',\n    textAlign: 'center',\n  },\n  widgets: {\n    padding: 20,\n  },\n  widgetContainer: {\n    marginBottom: 16,\n  },\n});",
+import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+  Alert,
+} from 'react-native';
+import { useAuth } from '../contexts/AuthContext';
+import InstanceCard from '../components/InstanceCard';
+import TeamCard from '../components/TeamCard';
+import { TEAMS } from '../constants/teams';
+
+export default function HomeScreen({ navigation }: any) {
+  const { user, instances, refreshInstances } = useAuth();
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await refreshInstances();
+    setRefreshing(false);
+  }, [refreshInstances]);
+
+  const handleTeamPress = (teamId: string, teamName: string) => {
+    // Navigate to team screen if available
+    if (teamId === 'teamD') {
+      navigation.navigate('TeamD');
+    } else {
+      // For other teams, show alert
+      Alert.alert(
+        teamName,
+        'Team portal integration coming soon!\n\nTeams will build native components in their src/mobile/ folders.',
+        [{ text: 'OK' }]
+      );
+    }
+  };
+
+  return (
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
+      <View style={styles.header}>
+        <Text style={styles.title}>Welcome to Large Event Platform</Text>
+        {user && (
+          <Text style={styles.userEmail}>Hello, {user.email}!</Text>
+        )}
+        <Text style={styles.subtitle}>Choose a team to get started</Text>
+      </View>
+
+      {instances.length > 0 && (
+        <View style={styles.instancesSection}>
+          <Text style={styles.sectionTitle}>Your Instances</Text>
+          {instances.map((instance) => (
+            <InstanceCard key={instance.id} instance={instance} />
+          ))}
+          <Text style={styles.instanceCount}>
+            Total instances: {instances.length}
+          </Text>
+        </View>
+      )}
+
+      <View style={styles.teamsSection}>
+        <Text style={styles.sectionTitle}>Teams</Text>
+        <View style={styles.teamsGrid}>
+          {TEAMS.map((team) => (
+            <View key={team.id} style={styles.teamCardWrapper}>
+              <TeamCard
+                team={team}
+                onPress={() => handleTeamPress(team.id, team.name)}
+              />
+            </View>
+          ))}
+        </View>
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f9fafb',
+  },
+  header: {
+    padding: 24,
+    backgroundColor: '#ffffff',
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#111827',
+    marginBottom: 8,
+  },
+  userEmail: {
+    fontSize: 18,
+    color: '#6b7280',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#9ca3af',
+  },
+  instancesSection: {
+    padding: 16,
+    backgroundColor: '#ffffff',
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 16,
+  },
+  instanceCount: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginTop: 8,
+  },
+  teamsSection: {
+    padding: 16,
+  },
+  teamsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  teamCardWrapper: {
+    width: '48%',
+    marginBottom: 16,
+  },
+});

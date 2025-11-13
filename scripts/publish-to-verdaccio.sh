@@ -2,18 +2,22 @@
 
 #
 # Publish @large-event packages to local Verdaccio registry
-# Usage: ./scripts/publish-to-verdaccio.sh [--unpublish]
+# Usage: ./scripts/publish-to-verdaccio.sh [--republish|--unpublish]
 #
 # Options:
-#   --unpublish    Unpublish existing versions before publishing (useful for local dev)
+#   --republish, -r    Unpublish existing versions before publishing (useful for local dev)
+#   --unpublish, -u    Only unpublish packages without republishing
 #
 
 set -e
 
 # Parse command line arguments
-UNPUBLISH=false
-if [ "$1" = "--unpublish" ] || [ "$1" = "-u" ]; then
-  UNPUBLISH=true
+REPUBLISH=false
+UNPUBLISH_ONLY=false
+if [ "$1" = "--republish" ] || [ "$1" = "-r" ]; then
+  REPUBLISH=true
+elif [ "$1" = "--unpublish" ] || [ "$1" = "-u" ]; then
+  UNPUBLISH_ONLY=true
 fi
 
 # Cleanup function to restore .npmrc on exit
@@ -82,7 +86,7 @@ echo -e "${GREEN}✓ .npmrc configured for Verdaccio${NC}"
 echo ""
 
 # Unpublish existing versions if requested
-if [ "$UNPUBLISH" = true ]; then
+if [ "$REPUBLISH" = true ] || [ "$UNPUBLISH_ONLY" = true ]; then
   echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
   echo -e "${YELLOW}🗑️  Unpublishing existing versions...${NC}"
   echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -111,6 +115,14 @@ if [ "$UNPUBLISH" = true ]; then
 
   echo -e "${GREEN}✓ Unpublish phase complete${NC}"
   echo ""
+fi
+
+# Exit early if only unpublishing
+if [ "$UNPUBLISH_ONLY" = true ]; then
+  echo -e "${GREEN}========================================${NC}"
+  echo -e "${GREEN}✅ Packages unpublished successfully!${NC}"
+  echo -e "${GREEN}========================================${NC}"
+  exit 0
 fi
 
 # Build and publish each package

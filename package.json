@@ -7,16 +7,20 @@
     "shared/database",
     "shared/api-types",
     "shared/api",
+    "shared/api-client",
+    "shared/web-components",
+    "shared/mobile-components",
     "legacy-gateway",
     "apps/web-user",
     "apps/web-admin",
-    "apps/mobile-shell",
+    "apps/mobile",
     "teams/teamA/src",
     "teams/teamB/src",
     "teams/teamC/src",
     "teams/teamD/src",
     "teams/teamD/src/database",
-    "teams/teamD/src/mobile-components"
+    "teams/teamD/src/mobile-components",
+    "teams/teamD/src/web-components"
   ],
   "packageManager": "pnpm@8.15.0",
   "pnpm": {
@@ -56,6 +60,8 @@
     "teamd:mobile:dev": "pnpm --filter @teamd/mobile-components dev",
     "teamd:mobile:publish": "./scripts/publish-mobile.sh teamd",
     "db:workflow": "./scripts/db-workflow.sh",
+    "publish": "./scripts/publish-to-verdaccio.sh",
+    "republish": "./scripts/publish-to-verdaccio.sh --unpublish",
     "setup": "./scripts/setup.sh",
     "sync-submodules": "./scripts/sync-submodules.sh",
     "start:local": "docker-compose up -d && pnpm dev"

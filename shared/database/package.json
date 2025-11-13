@@ -1,6 +1,6 @@
 {
   "name": "@large-event/database",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Shared database schemas and utilities",
   "type": "module",
   "main": "dist/index.js",
@@ -11,8 +11,8 @@
     "directory": "shared/database"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "generate": "node scripts/generate-migration.js",
     "generate:simple": "drizzle-kit generate",
     "migrate": "tsx src/migrate.ts",
@@ -28,8 +28,9 @@
   "devDependencies": {
     "@types/pg": "^8.11.5",
     "drizzle-kit": "^0.21.2",
+    "tsup": "^8.3.5",
     "tsx": "^4.7.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.9.3"
   },
   "exports": {
     ".": {

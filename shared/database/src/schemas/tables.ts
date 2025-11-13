@@ -22,7 +22,7 @@
  */
 
 import { pgTable, serial, varchar, timestamp, text, integer, boolean, unique } from 'drizzle-orm/pg-core';
-import { users } from '@large-event/database/schemas';
+import { users } from './users';
 
 /**
  * Organizations table

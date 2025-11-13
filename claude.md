@@ -30,7 +30,7 @@ large-event/
 │   ├── gateway/              # Nginx reverse proxy config
 │   ├── web-user/            # User portal shell (iframe-based)
 │   ├── web-admin/           # Admin portal shell (iframe-based)
-│   └── mobile-shell/        # React Native mobile app shell
+│   └── mobile/              # React Native mobile app shell
 │
 ├── teams/                    # Team Git Submodules (Sparse Checkout)
 │   ├── teamA/src/           # Only src/ from team repo
@@ -41,7 +41,9 @@ large-event/
 ├── shared/                   # Shared Infrastructure Packages
 │   ├── database/            # Drizzle ORM + PostgreSQL schemas
 │   ├── api-types/           # TypeScript API type definitions
-│   └── api/                 # Shared API utilities
+│   ├── api/                 # Shared API utilities & auth infrastructure
+│   ├── web-components/      # Shared React components for main portals
+│   └── mobile-components/   # Shared React Native components & utilities
 │
 ├── legacy-gateway/           # Fastify Internal API Gateway
 ├── scripts/                  # Automation & setup scripts
@@ -239,7 +241,7 @@ docker-compose logs -f      # View logs
 
 #### Mobile Package Development & Publishing
 
-The platform supports team-specific mobile component packages published to Verdaccio. Teams develop native React Native components independently, then publish them for integration into the mobile-shell.
+The platform supports team-specific mobile component packages published to Verdaccio. Teams develop native React Native components independently, then publish them for integration into the mobile app.
 
 **Development Workflow:**
 
@@ -262,7 +264,7 @@ npm login --registry http://localhost:4873
 pnpm teamd:mobile:publish
 # Or manually: cd teams/teamD/src/mobile && pnpm publish --registry http://localhost:4873
 
-# 6. Mobile-shell automatically uses workspace link for development
+# 6. Mobile app automatically uses workspace link for development
 # Use "workspace:*" in package.json for active development
 # Use "1.0.0" (specific version) to test published packages
 ```
@@ -270,7 +272,7 @@ pnpm teamd:mobile:publish
 **Two Integration Modes:**
 
 1. **Workspace Development** (Default):
-   - Mobile-shell uses `"@teamd/mobile-components": "workspace:*"` in package.json
+   - Mobile app uses `"@teamd/mobile-components": "workspace:*"` in package.json
    - Changes in team mobile components immediately available
    - Best for active development and testing
 
@@ -298,7 +300,7 @@ teams/teamD/src/mobile/
 └── README.md             # Team documentation
 ```
 
-**Integration in Mobile-Shell:**
+**Integration in Mobile App:**
 
 ```typescript
 // Import team component
@@ -350,7 +352,7 @@ interface TeamComponentProps {
 - Team mobile packages export React Native components (NOT web components)
 - Components use react-native primitives (View, Text, ScrollView, etc.)
 - Teams include their own API clients in `services/` directory
-- Mobile-shell provides auth context and shared types via `@large-event/api-types`
+- Mobile app provides auth context and shared types via `@large-event/api-types`
 - Published packages include both source (`src/`) and compiled (`dist/`) code
 
 ### Development Server Ports
@@ -484,8 +486,40 @@ teams/teamD/src/database/
 
 ### @large-event/api
 **Path**: `shared/api/`
-**Purpose**: Shared API utilities and helpers
-**Usage**: Common API logic across teams
+**Purpose**: Shared API utilities, auth infrastructure, and React hooks
+**Technology**: TypeScript + React
+**Exports**:
+- Auth context factory (`createAuthContext`)
+- Auth API client (`createAuthApi`)
+- Token storage utilities (`createTokenStorage`)
+- Cross-tab auth sync (`createCrossTabAuth`)
+- HTTP client factory (`createFetchClient`)
+- React hooks (`useInstances`, `useInstance`)
+- Server-side auth utilities (JWT generation/verification)
+
+### @large-event/web-components
+**Path**: `shared/web-components/`
+**Purpose**: Shared React components for main portals (web-user & web-admin)
+**Technology**: React 19 + TypeScript + Tailwind CSS
+**Exports**:
+- `LoginForm` - Configurable email login component
+- `ProtectedRoute` - Authentication guard HOC
+- Tailwind CSS preset with brand colors
+- Re-exports from `@large-event/api` for convenience
+
+### @large-event/mobile-components
+**Path**: `shared/mobile-components/`
+**Purpose**: Shared React Native components and utilities for mobile apps
+**Technology**: React Native + TypeScript + AsyncStorage
+**Exports**:
+- `LoadingSpinner` - Loading indicator component
+- `InstanceCard` - Instance display card
+- `TeamCard` - Team selection card
+- `ErrorBoundary` - Error boundary wrapper
+- `asyncStorageAdapter` - AsyncStorage adapter for @large-event/api
+- `createMobileApiClient` - Mobile axios client factory
+- Platform utilities (getApiBaseUrl, isIOS, isAndroid, etc.)
+- Color constants and style helpers
 
 ### @large-event/gateway
 **Path**: `legacy-gateway/`
@@ -505,11 +539,25 @@ teams/teamD/src/database/
 **Technology**: React 19 + Vite + TanStack Router
 **Features**: Iframe-based team admin embedding, dashboards, data viz (Recharts)
 
-### @large-event/mobile-shell
-**Path**: `apps/mobile-shell/`
+### @large-event/mobile
+**Path**: `apps/mobile/`
 **Purpose**: Mobile application shell
 **Technology**: React Native 0.74.5 + Expo 51
 **Features**: WebView integration of team components
+
+---
+
+## Team-Specific Packages
+
+### @teamd/web-components
+**Path**: `teams/teamD/src/web-components/`
+**Purpose**: Team D specific React components for standalone apps
+**Technology**: React 19 + TypeScript + Inline Styles
+**Exports**:
+- `LocalLoginForm` - Development login with Team D purple branding
+- `teamDColors` - Team D color constants
+- `teamDStyles` - Common inline style objects
+**Note**: Other teams (A, B, C) can follow this pattern to create their own component libraries
 
 ---
 
@@ -524,15 +572,18 @@ teams/teamD/src/database/
     "shared/database",
     "shared/api-types",
     "shared/api",
+    "shared/web-components",
     "legacy-gateway",
     "apps/web-user",
     "apps/web-admin",
-    "apps/mobile-shell",
+    "apps/mobile",
     "teams/teamA/src",
     "teams/teamB/src",
     "teams/teamC/src",
     "teams/teamD/src",
-    "teams/teamD/src/database"
+    "teams/teamD/src/database",
+    "teams/teamD/src/mobile-components",
+    "teams/teamD/src/web-components"
   ]
 }
 ```

@@ -1,9 +1,25 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useAuth } from '../contexts/AuthContext';
-import ProtectedRoute from '../components/ProtectedRoute';
+import { ProtectedRoute, LoginForm } from '@large-event/web-components';
+import { useInstanceContext } from '@large-event/api-client';
+import { useEffect } from 'react';
 
 function HomePage() {
-  const { user, instances, logout } = useAuth();
+  const { user, logout, loading, login } = useAuth();
+  const { instances } = useInstanceContext();
+
+  // Listen for logout messages from Team D tabs
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'teamd-logout') {
+        console.log('[User Portal] Received logout from Team D, reloading...');
+        window.location.reload();
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   const teamUrls: Record<string, string> = {
     'Team A': process.env.TEAM_A_WEB_URL || 'http://localhost:3011',
@@ -75,7 +91,13 @@ function HomePage() {
   };
 
   return (
-    <ProtectedRoute>
+    <ProtectedRoute
+      user={user}
+      loading={loading}
+      unauthorizedComponent={
+        <LoginForm title="Large Event User Portal" onLogin={login} />
+      }
+    >
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-6xl mx-auto">
           <div className="mb-12 flex justify-between items-center">

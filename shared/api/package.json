@@ -1,7 +1,7 @@
 {
   "name": "@large-event/api",
-  "version": "1.0.1",
-  "description": "Shared API layer and business logic",
+  "version": "1.1.0",
+  "description": "Server-side API utilities and auth for Large Event Platform",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,24 +14,27 @@
     "registry": "http://localhost:4873"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@large-event/api-types": "^1.0.1",
-    "@large-event/database": "^1.0.1",
+    "@large-event/api-types": "^1.0.3",
+    "@large-event/database": "^1.0.2",
     "drizzle-orm": "^0.30.10",
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
-    "typescript": "^5.4.5"
+    "tsup": "^8.3.5",
+    "typescript": "^5.9.3"
   },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     }
-  }
+  },
+  "peerDependencies": {}
+
 }

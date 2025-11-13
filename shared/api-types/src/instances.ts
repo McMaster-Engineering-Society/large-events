@@ -43,3 +43,19 @@ export interface InstanceListResponse {
   instances: InstanceResponse[];
   count: number;
 }
+
+/**
+ * Platform-agnostic Instance API interface
+ * Implementations can use any HTTP client (fetch, axios, etc.)
+ */
+export interface InstanceApi {
+  /**
+   * Fetch all instances accessible by the authenticated user
+   */
+  getInstances(): Promise<InstanceListResponse>;
+
+  /**
+   * Fetch a specific instance by ID
+   */
+  getInstance(id: number): Promise<InstanceResponse>;
+}

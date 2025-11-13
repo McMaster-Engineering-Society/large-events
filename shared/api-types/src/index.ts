@@ -1,5 +1,6 @@
 export * from './common';
 export * from './instances';
+export * from './auth';
 
 export interface ApiClient {
   get<T>(url: string, config?: any): Promise<T>;

@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@tanstack/react-router';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function Navigation() {
+export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth();
 
@@ -12,14 +12,14 @@ export default function Navigation() {
     <nav className="bg-white shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
-          <Link href="/" className="text-2xl font-bold text-gray-800">
+          <Link to="/" className="text-2xl font-bold text-gray-800">
             Large Event Platform
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8">
             <Link
-              href="/"
+              to="/"
               className="text-gray-600 hover:text-gray-900 transition-colors"
             >
               Dashboard
@@ -59,7 +59,7 @@ export default function Navigation() {
           <div className="md:hidden py-4 border-t border-gray-200">
             <div className="flex flex-col space-y-4">
               <Link
-                href="/"
+                to="/"
                 className="text-gray-600 hover:text-gray-900 transition-colors"
                 onClick={() => setIsOpen(false)}
               >

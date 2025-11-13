@@ -1,6 +1,6 @@
 import { useTeamWidget } from '../hooks/useTeamWidget';
 
-export default function TeamAWidget() {
+export function TeamAWidget() {
   const { teamUrl } = useTeamWidget('team-a-admin');
 
   return (

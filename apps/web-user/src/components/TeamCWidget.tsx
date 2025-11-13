@@ -2,7 +2,7 @@
 
 import { useTeamWidget } from '../hooks/useTeamWidget';
 
-export default function TeamCWidget() {
+export function TeamCWidget() {
   const { teamUrl } = useTeamWidget('team-c-user');
 
   return (

@@ -1,0 +1,45 @@
+{
+  "name": "@large-event/web-components",
+  "version": "1.0.4",
+  "description": "Shared web component library for Large Event Platform main portals",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MacEngSociety/large-event.git",
+    "directory": "shared/web-components"
+  },
+  "publishConfig": {
+    "registry": "http://localhost:4873"
+  },
+  "scripts": {
+    "build": "tsup && pnpm run build:styles",
+    "build:styles": "mkdir -p dist/styles && cp src/styles/*.css src/styles/*.js dist/styles/ 2>/dev/null || true",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-dom": ">=19.0.0",
+    "@tanstack/react-router": ">=1.58.0"
+  },
+  "dependencies": {
+    "@large-event/api-client": "^1.0.0",
+    "@large-event/api-types": "^1.0.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.1.9",
+    "tsup": "^8.3.5",
+    "typescript": "^5.9.3"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./styles": "./dist/styles/globals.css",
+    "./tailwind-preset": "./dist/styles/tailwind-preset.js"
+  }
+}

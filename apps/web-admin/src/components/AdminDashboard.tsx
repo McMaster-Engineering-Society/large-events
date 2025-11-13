@@ -1,7 +1,9 @@
 import { useAuth } from "../contexts/AuthContext";
+import { useInstanceContext } from "@large-event/api-client";
 
-export default function AdminDashboard() {
-  const { user, instances, logout } = useAuth();
+export function AdminDashboard() {
+  const { user, logout } = useAuth();
+  const { instances } = useInstanceContext();
 
   const teamPortalPorts: Record<string, number> = {
     teamA: 3021,
@@ -10,10 +12,28 @@ export default function AdminDashboard() {
     teamD: 3024,
   };
 
-  const openTeamPortal = (teamName: string) => {
+  const openTeamPortal = async (teamName: string) => {
     const port = teamPortalPorts[teamName];
-    const url = `http://localhost:${port}`;
-    // Cookie will be automatically sent with request
+    let url = `http://localhost:${port}`;
+
+    try {
+      // Fetch JWT token to pass to team portal
+      const tokenResponse = await fetch('/api/auth/token', {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      if (tokenResponse.ok) {
+        const tokenData = await tokenResponse.json();
+        if (tokenData.token) {
+          url = `${url}?auth=${encodeURIComponent(tokenData.token)}`;
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching auth token:', error);
+      // Fallback to base URL without token
+    }
+
     window.open(url, '_blank');
   };
 

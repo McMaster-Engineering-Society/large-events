@@ -37,26 +37,6 @@ export interface UpdateUserDto {
   isActive?: string;
 }
 
-export interface LoginDto {
-  email: string;
-  password: string;
-}
-
-export interface AuthUser {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-  teamId?: string;
-}
-
-export interface AuthResponse {
-  user: AuthUser;
-  accessToken: string;
-  refreshToken: string;
-}
-
 export interface InterTeamApiRequest {
   teamId: string;
   endpoint: string;

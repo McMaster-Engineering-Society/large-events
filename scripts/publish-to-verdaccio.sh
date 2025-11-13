@@ -29,7 +29,7 @@ cleanup() {
 trap cleanup EXIT
 
 REGISTRY="http://localhost:4873"
-PACKAGES=("database" "api-types" "api")
+PACKAGES=("database" "api-types" "api" "mobile-components" "web-components")
 
 # Colors for output
 GREEN='\033[0.32m'

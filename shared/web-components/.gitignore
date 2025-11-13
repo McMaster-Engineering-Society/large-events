@@ -1,0 +1,16 @@
+# Compiled output
+dist/
+*.js
+*.d.ts
+*.d.ts.map
+*.js.map
+
+# But keep TypeScript source files
+!*.ts
+!*.tsx
+
+# Keep config and style files
+!*.config.js
+!*.config.ts
+!src/styles/*.js
+!src/styles/*.css

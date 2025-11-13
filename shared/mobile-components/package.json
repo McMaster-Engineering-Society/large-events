@@ -1,0 +1,41 @@
+{
+  "name": "@large-event/mobile-components",
+  "version": "1.0.1",
+  "description": "Shared React Native components and utilities for Large Event Platform",
+  "main": "dist/index.js",
+  "react-native": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MacEngSociety/large-event.git",
+    "directory": "shared/mobile-components"
+  },
+  "publishConfig": {
+    "registry": "http://localhost:4873"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-native": ">=0.70.0"
+  },
+  "dependencies": {
+    "@large-event/api-types": "^1.0.3",
+    "@react-native-async-storage/async-storage": "^1.23.1",
+    "axios": "^1.6.8"
+  },
+  "devDependencies": {
+    "@types/react": "~18.2.45",
+    "typescript": "^5.9.3"
+  },
+  "exports": {
+    ".": {
+      "react-native": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  }
+}

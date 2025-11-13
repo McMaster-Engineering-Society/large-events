@@ -10,7 +10,7 @@ repo-main/
 │   ├── gateway/                  # Nginx gateway configuration
 │   ├── web-user/                # Micro-frontend shell (user portal)
 │   ├── web-admin/               # Micro-frontend shell (admin portal)
-│   └── mobile-shell/            # Mobile app shell
+│   └── mobile/                  # Mobile app shell
 ├── teams/                       # Git submodules (sparse-checkout: src/ only)
 │   ├── teamA/
 │   │   └── src/                # Team A's source code from their repository
@@ -271,7 +271,7 @@ large-event/
 │   ├── gateway/                  #    Nginx reverse proxy
 │   ├── web-user/                #    Micro-frontend user shell
 │   ├── web-admin/               #    Micro-frontend admin shell
-│   └── mobile-shell/            #    React Native shell app
+│   └── mobile/                  #    React Native shell app
 ├── shared/                      # 🔧 Shared Infrastructure
 │   ├── database/               #    Cross-team database schemas
 │   ├── api-types/              #    Shared TypeScript interfaces

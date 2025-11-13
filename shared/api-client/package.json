@@ -1,0 +1,39 @@
+{
+  "name": "@large-event/api-client",
+  "version": "1.0.0",
+  "description": "Client-side API utilities and React hooks for Large Event Platform",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MacEngSociety/large-event.git",
+    "directory": "shared/api-client"
+  },
+  "publishConfig": {
+    "registry": "http://localhost:4873"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@large-event/api-types": "^1.0.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.3",
+    "react": "19.1.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.9.3"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  }
+}

@@ -29,7 +29,7 @@ cleanup() {
 trap cleanup EXIT
 
 REGISTRY="http://localhost:4873"
-PACKAGES=("database" "api-types" "api" "mobile-components" "web-components")
+PACKAGES=("database" "api-types" "api" "api-client" "mobile-components" "web-components")
 
 # Colors for output
 GREEN='\033[0.32m'
@@ -160,6 +160,16 @@ for pkg in "${PACKAGES[@]}"; do
 
   if [ $PUBLISH_EXIT_CODE -eq 0 ]; then
     echo -e "${GREEN}✓ Published successfully${NC}"
+
+    # Refresh lockfile to recognize newly published package
+    echo -e "${YELLOW}📥 Refreshing lockfile...${NC}"
+    pnpm install --no-frozen-lockfile
+
+    if [ $? -eq 0 ]; then
+      echo -e "${GREEN}✓ Lockfile updated${NC}"
+    else
+      echo -e "${YELLOW}⚠️  Lockfile update warning${NC}"
+    fi
   else
     echo -e "${RED}✗ Publish failed${NC}"
     exit 1

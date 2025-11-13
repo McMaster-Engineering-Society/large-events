@@ -27,6 +27,7 @@ export const Route = createRootRoute({
           storage: sessionStorageAdapter,
           storageKey: "web-admin-instance",
           refreshEventName: "auth-changed",
+          autoFetch: false,
         }}
       >
         <div className="min-h-screen bg-gray-50">

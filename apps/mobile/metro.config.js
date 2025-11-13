@@ -17,6 +17,11 @@ config.resolver = {
     path.resolve(__dirname, 'node_modules'),
     path.resolve(workspaceRoot, 'node_modules'),
   ],
+  // Exclude workspace package node_modules to prevent version conflicts
+  blockList: [
+    /shared\/.*\/node_modules\/.*/,
+    /teams\/.*\/node_modules\/.*/,
+  ],
 };
 
 module.exports = config;

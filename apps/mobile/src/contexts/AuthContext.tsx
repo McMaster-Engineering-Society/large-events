@@ -40,6 +40,7 @@ const httpClient = createFetchClient({
 const authApi = createAuthApi({
   httpClient,
   authType: 'bearer',
+  basePath: '/auth',
 });
 
 // Create token storage

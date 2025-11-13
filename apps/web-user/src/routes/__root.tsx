@@ -27,6 +27,7 @@ export const Route = createRootRoute({
           storage: sessionStorageAdapter,
           storageKey: "web-user-instance",
           refreshEventName: "auth-changed",
+          autoFetch: false,
         }}
       >
         <Outlet />
